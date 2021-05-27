@@ -1,0 +1,55 @@
+From b139611dc02834a40dfeca92ef5dbfcaf80fdc79 Mon Sep 17 00:00:00 2001
+From: Liz MacLean <elizabeth.maclean95@gmail.com>
+Date: Fri, 14 May 2021 22:46:41 -0400
+Subject: [PATCH] remove env_get_location override
+
+---
+ board/st/stm32mp1/stm32mp1.c | 35 -----------------------------------
+ 1 file changed, 35 deletions(-)
+
+diff --git a/board/st/stm32mp1/stm32mp1.c b/board/st/stm32mp1/stm32mp1.c
+index 9a02e14ba5..2113fe39a7 100644
+--- a/board/st/stm32mp1/stm32mp1.c
++++ b/board/st/stm32mp1/stm32mp1.c
+@@ -799,41 +799,6 @@ int board_interface_eth_init(struct udevice *dev,
+ 	return 0;
+ }
+ 
+-enum env_location env_get_location(enum env_operation op, int prio)
+-{
+-	u32 bootmode = get_bootmode();
+-
+-	if (prio)
+-		return ENVL_UNKNOWN;
+-
+-	switch (bootmode & TAMP_BOOT_DEVICE_MASK) {
+-	case BOOT_FLASH_SD:
+-	case BOOT_FLASH_EMMC:
+-		if (CONFIG_IS_ENABLED(ENV_IS_IN_MMC))
+-			return ENVL_MMC;
+-		else if (CONFIG_IS_ENABLED(ENV_IS_IN_EXT4))
+-			return ENVL_EXT4;
+-		else
+-			return ENVL_NOWHERE;
+-
+-	case BOOT_FLASH_NAND:
+-	case BOOT_FLASH_SPINAND:
+-		if (CONFIG_IS_ENABLED(ENV_IS_IN_UBI))
+-			return ENVL_UBI;
+-		else
+-			return ENVL_NOWHERE;
+-
+-	case BOOT_FLASH_NOR:
+-		if (CONFIG_IS_ENABLED(ENV_IS_IN_SPI_FLASH))
+-			return ENVL_SPI_FLASH;
+-		else
+-			return ENVL_NOWHERE;
+-
+-	default:
+-		return ENVL_NOWHERE;
+-	}
+-}
+-
+ const char *env_ext4_get_intf(void)
+ {
+ 	u32 bootmode = get_bootmode();

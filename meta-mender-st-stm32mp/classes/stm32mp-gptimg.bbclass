@@ -10,16 +10,17 @@ IMAGE_CMD_gptimg_append_stcommon() {
     rm "$wks"
 
     cat >> "$wks" <<EOF
-part fsbl1 --source gptcopy --sourceparams="file=tf-a-stm32mp157c-dk2-trusted.stm32" --ondisk mmcblk --label fsbl1 --part-type 0x8301 --fixed-size 256K --align 17
-part fsbl2 --source gptcopy --sourceparams="file=tf-a-stm32mp157c-dk2-trusted.stm32" --ondisk mmcblk --label fsbl2 --part-type 0x8301 --fixed-size 256K
-part ssbl  --source gptcopy --sourceparams="file=u-boot-stm32mp157c-dk2-trusted.stm32" --ondisk mmcblk --label ssbl --part-type 0x8301 --fixed-size 2048K
+
+part fsbl1 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl1 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157d-dk1-sdcard.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K --align 17
+part fsbl2 --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fsbl2 --sourceparams="file=${DEPLOY_DIR_IMAGE}/arm-trusted-firmware/tf-a-stm32mp157d-dk1-sdcard.stm32" --ondisk mmcblk --part-type 0x8301 --fixed-size 256K
+part fip  --source rawcopy --fstype=ext4 --fsoptions "noauto" --part-name=fip --sourceparams="file=${DEPLOY_DIR_IMAGE}/fip/fip-stm32mp157d-dk1-trusted.bin" --ondisk mmcblk --part-type 0x8301 --fixed-size 4096K
 
 part --source rawcopy --sourceparams="file=${WORKDIR}/uboot.env" --ondisk "$ondisk_dev" --align $boot_env_align_kb --no-table
 part --source rootfs --rootfs-dir ${WORKDIR}/bootfs.${BB_CURRENTTASK} --ondisk "$ondisk_dev" --fstype=vfat --label boot --align $alignment_kb --fixed-size ${MENDER_BOOT_PART_SIZE_MB} --active $boot_part_params
 part --source rootfs --ondisk "$ondisk_dev" --fstype=${ARTIFACTIMG_FSTYPE} --label primary --align $alignment_kb --fixed-size ${MENDER_CALC_ROOTFS_SIZE}k $exclude_path_options
 part --source rootfs --ondisk "$ondisk_dev" --fstype=${ARTIFACTIMG_FSTYPE} --label secondary --align $alignment_kb --fixed-size ${MENDER_CALC_ROOTFS_SIZE}k $exclude_path_options
 part --source rootfs --rootfs-dir ${IMAGE_ROOTFS}/data --ondisk "$ondisk_dev" --fstype=${ARTIFACTIMG_FSTYPE} --label data --align $alignment_kb --fixed-size ${MENDER_DATA_PART_SIZE_MB}
-bootloader --ptable $part_type
+bootloader --ptable gpt
 EOF
 
     echo "### Contents of STM32MP1 wks file ###"
