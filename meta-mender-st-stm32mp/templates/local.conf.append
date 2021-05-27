@@ -1,5 +1,7 @@
 
+# =========================================================================
 # Appended fragment from meta-mender-community/meta-mender-st-stm32mp/templates
+# =========================================================================
 
 MACHINE ?= "stm32mp1-disco"
 
@@ -58,3 +60,12 @@ MENDER_DATA_PART = "${MENDER_STORAGE_DEVICE_BASE}7"
 IMAGE_FSTYPES_append = " gptimg.gz"
 
 IMAGE_BOOT_FILES = "stm32mp1-boot.scr;boot.scr"
+
+# Specify device tree
+KERNEL_DEVICETREE="stm32mp157d-dk1.dtb"
+
+# Maps to CONFIG_ENV_OFFSET 0x280000
+MENDER_UBOOT_ENV_STORAGE_DEVICE_OFFSET_1 = "2621440"
+# Maps to CONFIG_ENV_OFFSET_REDUND 0x280000
+MENDER_UBOOT_ENV_STORAGE_DEVICE_OFFSET_2 = "2883584"
+
